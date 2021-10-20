@@ -6,6 +6,9 @@ import os
 # ===================初期値======================
 moveMeanDay = 3
 year = 2020
+startyear = 2010
+endyear = 2020
+namelist = np.array(['hgt'])
 # ===================定数=====================
 
 md = moveMeanDay
@@ -31,8 +34,8 @@ def gWind(phidev, phizonal):
     devzonalphi_devy = np.gradient(phizonal, y)
     ugdev = (-1*devphi_devy.T/f).T
     vgdev = (1*devphi_devx.T/f).T
-    ugzonal =  -1*devzonalphi_devy/f
-    uzonal = -M
+    # ugzonal =  -1*devzonalphi_devy/f
+    # uzonal = -M
     return ugdev, vgdev, 
 
 def hensa(name,year):
@@ -76,8 +79,9 @@ def hensa(name,year):
             print(f'complete to make {name}-{kind} {year}')
             
     else:
-        print(f'already exist {name}-{kind} {year}')
+        print(f'already exist {name} {year}')
     return 
+
 
 
 for year in range(startyear,endyear+1):
