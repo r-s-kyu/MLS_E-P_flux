@@ -8,7 +8,7 @@ moveMeanDay = 3
 year = 2020
 startyear = 2010
 endyear = 2020
-namelist = np.array(['hgt'])
+namelist = np.array(['GPH','T'])
 # ===================定数=====================
 
 md = moveMeanDay
@@ -64,7 +64,6 @@ def hensa(name,year):
         zonal = np.mean(data,axis=3)
         dev = (data.T - zonal.T).T
 
-        
         # np.save(f'../../dataJRA55/{name}/{name}_one_day_data.npy', data)
         # np.save(f'../../dataJRA55/{name}/{name}_one_day_zonal.npy', zonal)
         for i in range(dayc):
