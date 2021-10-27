@@ -10,49 +10,39 @@ day = 20
 fday = date(year,1,1)
 
 dc = (date(year,month,day)-fday).days + 1
+pcord = 
 
-namelist = ['temp','ugrd','vgrd']
+namelist = ['T','U','V']
 # kindlist = ['data','zonal','dev']
-kindlist = ['dev']
+kind = 'dev'
 
-for kind in kindlist:
+def epFlux(dc,year):
     for name in namelist:
-        savefile = f'D:/data/MLS/{name}/{year}/{year}d{str(i+1).zfill(3)}_{name}_{kind}.npy'
+        savefile = f'D:/data/JRA55/{name}/{year}/{year}d{str(dc).zfill(3)}_{name}_{kind}.npy'
         globals()[kind + name] = np.load(savefile)
 
-pcord = np.array([1000,975,950,925,900,875,850,825,800,775,750,700,
-        650,600,550,500,450,400,350,300,250,225,200,175,150,125,100,70,
-        50,30,20,10,7,5,3,2,1])*100
+    dp = np.array([])
+    for i in range(len(pcord)-1):
+        dp = np.append(dp, pcord[i]-pcord[i+1])
+    dp = np.append(dp,1)
 
-# print(pcord)
-
-phicord = np.arange(-90,91,1.25)*(math.pi/180.)
-
-a = 6.37e+6
-R = 287
-Cp = 1004
-K = R/Cp
-g0 = 9.80665
-ps = 100000
-omega = 7.29e-5
-Ts =  240
-H = R*Ts/g0
-rhos = ps/R/Ts
-Fy = np.zeros((145,37),dtype=np.float64)*np.nan
-Fz = np.zeros((145,37),dtype=np.float64)*np.nan
-N_2 = 4.0e-4
-f = 2*omega*np.sin(phicord)
-
-vudev_mean = np.mean(devvgrd*devugrd,axis=2)
-rho = rhos*(pcord/ps)
-Fy = (((-1)*a*vudev_mean*np.cos(phicord)).T*rho).T
-
-vTdev_mean = np.mean(devvgrd*devtemp,axis=2)
-Fz = ((a*np.cos(phicord)*f*R*vTdev_mean/(N_2*H)).T*rho).T
+    vudev_mean = np.mean(devV*devU,axis=2)
+    Fy = (((-1)*a*vudev_mean*np.cos(phicord)).T*rho).T
+    devFy = np.gradient(Fy*np.cos(phicord), phicord,axis=1)
+    z = -H*np.log(pcord*100/ps)
+    vTdev_mean = np.mean(devV*devtmp,axis=2)
+    Fz = ((a*np.cos(phicord)*f*R*vTdev_mean/(N_2*H)).T*rho).T
+    devFz = np.gradient(Fz,z,axis=0)
+    nablaF = devFy/(a*np.cos(phicord)) + devFz
+    # fzmean = np.mean(np.mean(nablaF))
+    nablaF = ((nablaF/(a*np.cos(phicord))).T/rho).T
+    nablaF = nablaF*60*60*24
+    # fmean = np.mean(np.mean(nablaF))
+    return Fy, Fz, nablaF
 
 # theta = (datatmp.T*(ps/pcord)**K).T # 3次元
 # thetadev = (theta.T - np.mean(theta).T).T
-# vthetadev_mean = np.mean(devvgrd*thetadev,axis=2)
+# vthetadev_mean = np.mean(devV*thetadev,axis=2)
 # theta_z_dev = theta*K/H
 # Fz = ((a*np.cos(phicord)*f*vthetadev_mean/np.mean(theta_z_dev,axis=2)).T*rho).T
 
