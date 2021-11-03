@@ -185,19 +185,27 @@ with h5py.File(file, 'r') as f:
     nTimes = f['HDFEOS']['SWATHS'][pq]['nTimes'][()]
     # print(data)
 
-print(lon)
-print(lon.shape)
+print(prs)
+savefile = f'./text/prs_values.npy'
+with open(savefile,'wb') as f:
+    np.save(savefile,prs)
+# print(lon.shape)
 
-# LONの近似
-lon_origin = np.copy(lon)
-lon_near = np.arange(-180, 180.1, 5)
-for i in range(73):
-    lon_origin[np.abs(lon_origin - lon_near[i]) < 2.5] = lon_near[i]
+# # LONの近似
+# lon_origin = np.copy(lon)
+# lon_near = np.arange(-180, 180.1, 5)
+# for i in range(73):
+#     lon_origin[np.abs(lon_origin - lon_near[i]) < 2.5] = lon_near[i]
 
-print(lon_origin)
-print(lon_origin.shape)
+# print(lon_origin)
+# print(lon_origin.shape)
 
 
-sort_lon = np.sort(lon_origin)
-print(sort_lon)
+# sort_lon = np.sort(lon_origin)
+# print(sort_lon)
+# %%
+prsfile = f'./text/prs_values.npy'
+with open(prsfile,'rb') as r:
+    pcord = np.load(r)
+print(pcord)
 # %%

@@ -5,8 +5,8 @@ from datetime import date
 import os
 
 year = 2020
-month = 10
-day = 10
+month = 2
+day = 1
 fday = date(year,1,1)
 
 dc = (date(year,month,day)-fday).days + 1
@@ -18,7 +18,12 @@ kind = 'dev'
 # for kind in kindlist:
 
 for name in namelist:
-    savefile = f'D:/data/MLS/zonal_deviation/{name}/{year}/{year}d{str(dc+1).zfill(3)}_{name}_{kind}.npy'
+    # savefile = f'D:/data/MLS/zonal_deviation/{name}/{year}/{year}d{str(dc+1).zfill(3)}_{name}_{kind}.npy'
+    
+    if name == 'GPH' or name =='T':
+        savefile = f'D:/data/MLS/zonal_deviation/{name}/{year}/{year}d{str(dc+1).zfill(3)}_{name}_{kind}.npy'
+    else:
+        savefile = f'D:/data/MLS/zonal_deviation/test/{name}/{year}/{year}d{str(dc+1).zfill(3)}_{name}_{kind}.npy'
     globals()[kind + name] = np.load(savefile)
 
 # pcord = np.array([1000,975,950,925,900,875,850,825,800,775,750,700,
@@ -67,7 +72,7 @@ nablaF = ((nablaF/(a*np.cos(phicord))).T/rho).T
 nablaF = nablaF*60*60*24
 # print(nablaF)
 fmean = np.mean(np.mean(nablaF))
-vector_scale = 9.0e+5
+vector_scale = 8.0e+6
 # vector_scale = 5.0e+4
 lim = 100
 mabiki = 1
@@ -117,7 +122,7 @@ if not os.path.exists(f'./picture'):
     os.mkdir(f'./picture')
 if not os.path.exists(f'./picture/day'):
     os.mkdir(f'./picture/day')
-file =  f'./picture/day/{year}/{year}{str(month).zfill(2)+str(day).zfill(2)}_E-Pflux_from_MLS.png'
-if not os.path.exists(file[:13]+f'/{year}'):
-    os.makedirs(file[:13]+f'/{year}')
+file =  f'./picture/testday/{year}/{year}{str(month).zfill(2)+str(day).zfill(2)}_E-Pflux_from_MLS.png'
+if not os.path.exists(file[:17]+f'/{year}'):
+    os.makedirs(file[:17]+f'/{year}')
 plt.savefig(file)
