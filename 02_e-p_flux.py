@@ -117,7 +117,7 @@ if not os.path.exists(f'./picture'):
     os.mkdir(f'./picture')
 if not os.path.exists(f'./picture/day'):
     os.mkdir(f'./picture/day')
-file =  f'./picture/day/{year}/{year}{str(month).zfill(2)+str(day).zfill(2)}_E-Pflux_from_MLS.png'
+file =  f'D:/picture/study/MLS/day/{year}/{year}{str(month).zfill(2)+str(day).zfill(2)}_E-Pflux_from_MLS.png'
 if not os.path.exists(file[:13]+f'/{year}'):
     os.makedirs(file[:13]+f'/{year}')
 plt.savefig(file)

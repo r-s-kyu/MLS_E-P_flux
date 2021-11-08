@@ -12,7 +12,7 @@ startyear = 2010
 endyear = 2020
 NAMElist = np.array(['GPH','T'])
 # NAMElist = np.array(['GPH'])
-namelist = np.array(['ght','tmp'])
+namelist = np.array(['hgt','tmp'])
 # ===================定数=====================
 
 md = moveMeanDay

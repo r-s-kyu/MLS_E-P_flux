@@ -6,8 +6,8 @@ import numpy as np
 from datetime import date
 import os
 
-syear = 2020
-fyear = 2020
+syear = 2010
+fyear = 2019
 for year in range(syear,fyear+1) :
 	print(year)
     # dayc = (date(year,12,31)-date(year,1,1)).days + 1
