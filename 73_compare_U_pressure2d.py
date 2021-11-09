@@ -43,7 +43,7 @@ with open(prsfile,'rb') as r:
     Pcord = np.load(r)
 Xcord = np.arange(-180,181,5)
 Ycord = np.arange(-90, 90.1,5)
-UMLS = f'D:/data/MLS/zonal_deviation/{NAME}/{year}/{year}d{str(dc+1).zfill(3)}_{NAME}_{kind}.npy'
+UMLS = f'D:/data/MLS/zonal_deviation/{NAME}/{year}/{year}d{str(dc).zfill(3)}_{NAME}_{kind}.npy'
 devMLS = np.load(UMLS) #[55,37,73]
 # mls2d = devMLS[:,:,mlsLonIndex]
 

@@ -37,8 +37,8 @@ def gWind(phidev,year):
     dayc = (date(year,12,31)-date(year,1,1)).days + 1
     devphi_devx = np.zeros((dayc,55,37,73))
         # print(devphi_devx[:,:,i].shape)
-    devphi_devx = np.gradient(phidev*g, latphicord, axis=2)
-    devphi_devy = np.gradient(phidev*g, lonlamdacord, axis=3)
+    devphi_devx = np.gradient(phidev*g, lonlamdacord, axis=3)
+    devphi_devy = np.gradient(phidev*g, latphicord, axis=2)
     # print(devphi_devy.shape)
     # devzonalphi_devy = np.gradient(phizonal, y)
 

@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 
 # ================初期値========================
 pressure = 10 # 基本的に100か10か1
-year = 2020
-month = 10
-day = 20
+year = 2010
+month = 12
+day = 31
 fday = date(year,1,1)
 lim = 100
 min_value ,max_value = -1000, 1000
@@ -42,7 +42,7 @@ with open(prsfile,'rb') as r:
     Pcord = np.load(r)
 Xcord = np.arange(-180,181,5)
 Ycord = np.arange(-90, 90.1,5)
-GPHMLS = f'D:/data/MLS/zonal_deviation/{NAME}/{year}/{year}d{str(dc+1).zfill(3)}_{NAME}_{kind}.npy'
+GPHMLS = f'D:/data/MLS/zonal_deviation/{NAME}/{year}/{year}d{str(dc).zfill(3)}_{NAME}_{kind}.npy'
 devMLS = np.load(GPHMLS) #[55,37,73]
 # mls2d = devMLS[:,:,mlsLonIndex]
 

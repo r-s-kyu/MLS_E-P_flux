@@ -86,9 +86,9 @@ def monthYearMean(startYear,endYear,amonth):
                 fz_3d = np.append(fz_3d,Fz[np.newaxis],axis=0)
                 nf_3d = np.append(nf_3d,nF[np.newaxis],axis=0)
         print(f'complete to add {ayear}!')  
-    FyMean = np.mean(fy_3d,axis=0)
-    FzMean = np.mean(fz_3d,axis=0)
-    nFMean = np.mean(nf_3d,axis=0)
+    FyMean = np.nanmean(fy_3d,axis=0)
+    FzMean = np.nanmean(fz_3d,axis=0)
+    nFMean = np.nanmean(nf_3d,axis=0)
     print(f'finish mean!')
     return FyMean, FzMean, nFMean
 
@@ -101,9 +101,9 @@ def monthMean(ayear,amonth):
         fy_3d = np.append(fy_3d,Fy[np.newaxis],axis=0)
         fz_3d = np.append(fz_3d,Fz[np.newaxis],axis=0)
         nf_3d = np.append(nf_3d,nF[np.newaxis],axis=0)
-    FyMean = np.mean(fy_3d,axis=0)
-    FzMean = np.mean(fz_3d,axis=0)
-    nFMean = np.mean(nf_3d,axis=0)
+    FyMean = np.nanmean(fy_3d,axis=0)
+    FzMean = np.nanmean(fz_3d,axis=0)
+    nFMean = np.nanmean(nf_3d,axis=0)
     return FyMean, FzMean, nFMean
 
 def draw():

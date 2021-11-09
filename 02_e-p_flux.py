@@ -18,7 +18,7 @@ kind = 'dev'
 # for kind in kindlist:
 
 for name in namelist:
-    savefile = f'D:/data/MLS/zonal_deviation/{name}/{year}/{year}d{str(dc+1).zfill(3)}_{name}_{kind}.npy'
+    savefile = f'D:/data/MLS/zonal_deviation/{name}/{year}/{year}d{str(dc).zfill(3)}_{name}_{kind}.npy'
     globals()[kind + name] = np.load(savefile)
 
 # pcord = np.array([1000,975,950,925,900,875,850,825,800,775,750,700,

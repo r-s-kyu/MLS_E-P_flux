@@ -42,7 +42,7 @@ prsfile = f'./text/prs_values.npy'
 with open(prsfile,'rb') as r:
     pcord = np.load(r)
 ycord = np.arange(-90, 90.1,5)
-GPHMLS = f'D:/data/MLS/zonal_deviation/{NAME}/{year}/{year}d{str(dc+1).zfill(3)}_{NAME}_{kind}.npy'
+GPHMLS = f'D:/data/MLS/zonal_deviation/{NAME}/{year}/{year}d{str(dc).zfill(3)}_{NAME}_{kind}.npy'
 devMLS = np.load(GPHMLS) #[55,37,73]
 mls2d = devMLS[:,:,mlsLonIndex]
 
