@@ -11,7 +11,7 @@ import os
 meanstart = 2010
 meanend = 2019
 year = 2020
-month = 11
+month = 12
 
 # ====================描画値===================
 vector_scale = 8.0e+5
@@ -59,7 +59,7 @@ def makeEPflux(year,month,day):
     dc = (date(year,month,day)-fday).days + 1
 
     for name in namelist:
-        savefile = f'D:/data/MLS/zonal_deviation/{name}/{year}/{year}d{str(dc+1).zfill(3)}_{name}_{kind}.npy'
+        savefile = f'D:/data/MLS/zonal_deviation/{name}/{year}/{year}d{str(dc).zfill(3)}_{name}_{kind}.npy'
         globals()[kind + name] = np.load(savefile)
 
     vudev_mean = np.mean(devV*devU,axis=2)
@@ -153,3 +153,14 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+# %%
+# def monthYearMean(startYear,endYear,amonth):
+#     for ayear in range(startYear,endYear+1):
+#         for aday in range(1,calendar.monthrange(ayear,amonth)[1]+1):
+
+year  = 2010
+amonth = 12
+print(calendar.monthrange(year,amonth)[1])
+    
