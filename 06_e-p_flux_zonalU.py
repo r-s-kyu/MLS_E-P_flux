@@ -7,11 +7,13 @@ import matplotlib.pyplot as plt
 import calendar
 import os
 
+from numpy.lib.npyio import load
+
 # ====================初期値===================
 meanstart = 2010
 meanend = 2019
 year = 2020
-month = 9
+month = 10
 
 # ====================描画値===================
 vector_scale = 8.0e+5
@@ -86,19 +88,17 @@ def monthYearMean(startYear,endYear,amonth):
     for ayear in range(startYear,endYear+1):
         for aday in range(1,calendar.monthrange(ayear,amonth)[1]+1):
             dates = f'{str(ayear).zfill(4)+str(amonth).zfill(2)+str(aday).zfill(2)}'
-            loadfile = f'D:/data/MLS/e-p_flux/{ayear}/e-p'
+            loadfile = f'D:/data/MLS/e-p_flux/{ayear}/e-p_flux.{dates}.npz'
+            dataz = np.load(loadfile)
+            Fy, Fz, nF = dataz["Fy"], dataz["Fz"], dataz["nablaF"]
+            zonalU = load_zonalU(ayear,amonth,aday)
             if ayear == startYear and aday ==1:
-                Fy, Fz, nF = np.load()
-                # Fy, Fz, nF = makeEPflux(ayear,amonth,aday)
                 fy_3d, fz_3d, nf_3d = Fy[np.newaxis], Fz[np.newaxis], nF[np.newaxis]
-                zonalU = load_zonalU(ayear,amonth,aday)
                 zonalU_3d = zonalU[np.newaxis]
             else:
-                Fy, Fz, nF = makeEPflux(ayear,amonth,aday)
                 fy_3d = np.append(fy_3d,Fy[np.newaxis],axis=0)
                 fz_3d = np.append(fz_3d,Fz[np.newaxis],axis=0)
                 nf_3d = np.append(nf_3d,nF[np.newaxis],axis=0)
-                zonalU = load_zonalU(ayear,amonth,aday)
                 zonalU_3d = np.append(zonalU_3d,zonalU[np.newaxis],axis=0)
         print(f'complete to add {ayear}!')  
     FyMean = np.nanmean(fy_3d,axis=0)
@@ -110,35 +110,39 @@ def monthYearMean(startYear,endYear,amonth):
 
 
 def monthMean(ayear,amonth):
-    Fy, Fz, nF = makeEPflux(ayear,month,1)
-    fy_3d, fz_3d, nf_3d = Fy[np.newaxis], Fz[np.newaxis], nF[np.newaxis]
-    zonalU = load_zonalU(ayear,amonth,1)
-    zonalU_3d = zonalU[np.newaxis]
-    for aday in range(2,calendar.monthrange(ayear,amonth)[1]+1):
-        Fy, Fz, nF = makeEPflux(ayear,amonth,aday)
-        fy_3d = np.append(fy_3d,Fy[np.newaxis],axis=0)
-        fz_3d = np.append(fz_3d,Fz[np.newaxis],axis=0)
-        nf_3d = np.append(nf_3d,nF[np.newaxis],axis=0)
+    for aday in range(1,calendar.monthrange(ayear,amonth)[1]+1):
         zonalU = load_zonalU(ayear,amonth,aday)
-        zonalU_3d = np.append(zonalU_3d,zonalU[np.newaxis],axis=0)
+        dates = f'{str(ayear).zfill(4)+str(amonth).zfill(2)+str(aday).zfill(2)}'
+        loadfile = f'D:/data/MLS/e-p_flux/{ayear}/e-p_flux.{dates}.npz'
+        dataz = np.load(loadfile)
+        Fy, Fz, nF = dataz["Fy"], dataz["Fz"], dataz["nablaF"]
+        if aday == 1:
+            fy_3d, fz_3d, nf_3d = Fy[np.newaxis], Fz[np.newaxis], nF[np.newaxis]
+            zonalU_3d = zonalU[np.newaxis]
+        else:
+            fy_3d = np.append(fy_3d,Fy[np.newaxis],axis=0)
+            fz_3d = np.append(fz_3d,Fz[np.newaxis],axis=0)
+            nf_3d = np.append(nf_3d,nF[np.newaxis],axis=0)
+            zonalU_3d = np.append(zonalU_3d,zonalU[np.newaxis],axis=0)
     FyMean = np.nanmean(fy_3d,axis=0)
     FzMean = np.nanmean(fz_3d,axis=0)
     nFMean = np.nanmean(nf_3d,axis=0)
     zonalUMean = np.nanmean(zonalU_3d,axis=0)
     return FyMean, FzMean, nFMean, zonalUMean
 
-# def zonalUMean(year,amonth):
     
-
 def draw():
-    fig, axes = plt.subplots(1,2,figsize=(7, 6),facecolor='grey',sharex=True,sharey=True)
+    fig, axes = plt.subplots(1,2,figsize=(9, 6),facecolor='#ddd',sharex=True,sharey=True)
     axes[0].set_ylim(lim,1.0)
     axes[0].set_xlim(latrange[0],latrange[1])
     axes[0].set_yscale('log')
     axes[0].set_yticks(yticks)
     axes[0].set_yticklabels(ylabel)
     axes[0].set_xlabel('LAT')
+    axes[1].set_xlabel('LAT')
+    # axes[0].set_ylabel('pressure',labelpad=-10)
     axes[0].set_ylabel('pressure')
+    # axes[1].set_ylabel('pressure')
 
     for prsnum in range(len(pcord)):
         if pcord[prsnum] == lim:
@@ -156,25 +160,30 @@ def draw():
             Fy, Fz, nablaF,zonalU = monthMean(year,month)
             title = str(year)
         # cont = axes[axnum].contour(X,Y,zonalhgt,colors='black')
-        cont = axes[y].contour(X,Y,zonalU,levels=np.linspace(-100,100,25),cmap='gist_rainbow')
+        # cont = axes[y].contour(X,Y,zonalU,levels=np.linspace(-100,100,25),linewidths=0.75, cmap='plasma_r')
+        cont = axes[y].contour(X,Y,zonalU,levels=np.arange(-100,101,10),linewidths=0.75, colors='black',alpha=0.65)
         contf = axes[y].contourf(X,Y,nablaF,interval,cmap='bwr',extend='both') #cmap='bwr_r'で色反転, extend='both'で範囲外設定
         q = axes[y].quiver(X[num:,2::mabiki], Y[num:,2::mabiki], Fy[num:,2::mabiki], Fz[num:,2::mabiki]*100,pivot='middle',
-                    scale_units='xy', headwidth=5,scale=vector_scale, color='green',width=0.005)
+                    scale_units='xy', headwidth=5,scale=vector_scale, color='#5c6',width=0.0065,alpha=0.70)
         axes[y].set_title(f'{title}',fontsize=15)
-        axes[y].clabel(cont, inline=True, fontsize=10)
-    fig.suptitle(f'Month:{month} mean E-Pflux and ∇',fontsize=20)
+        axes[y].clabel(cont, cont.levels[::1], inline=True, fontsize=12)
+    fig.suptitle(f'Month:{month} mean E-Pflux and U',fontsize=20)
     axpos = axes[0].get_position()
     # axpos2 = axes[0].get_position()
 
-    cbar_ax = fig.add_axes([0.87, axpos.y0, 0.02, axpos.height])
-    cbar_ax2 = fig.add_axes([0.95,axpos.y0, 0.02,axpos.height])
+    cbar_ax = fig.add_axes([0.81, axpos.y0, 0.02, axpos.height])
     fig.colorbar(contf,cax=cbar_ax)
-    fig.colorbar(cont,cax=cbar_ax2)
-    plt.subplots_adjust(right=0.85)
+    fig.text(0.77,0.90,'∇F[m/s/d]',size=14.5)
+    # cbar_ax2 = fig.add_axes([0.90,axpos.y0, 0.02,axpos.height])
+    # fig.colorbar(cont,cax=cbar_ax2)
+    # fig.text(0.89,0.90,'U[m/s]',size=14.5)
+    plt.subplots_adjust(right=0.78)
+    plt.subplots_adjust(left=0.1)
     plt.subplots_adjust(wspace=0.15)
     # if not os.path.exists(f'./picture/monthYearMean/{month}'):
     #     os.makedirs(f'./picture/yearsmean_2020/{month}')
     plt.savefig(f'D:/picture/study/MLS/monthYearMean/month{month}Mean_{meanstart}to{meanend}and{year}_E-Pflux.png')
+    plt.show()
     print(f'finish drawing!!!')
 
 def main():
