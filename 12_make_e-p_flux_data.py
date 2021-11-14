@@ -30,7 +30,7 @@ defineYear = 2019 #うるう年ではない年（てきとう）
 #         50,30,20,10,7,5,3,2,1])
 prsfile = f'./text/prs_values.npy'
 parent = f'D:/data/MLS/e-p_flux'
-child = np.array([],dtype=np.str_)
+child = np.array([],dtype=np.str_) #ここの配列に作りたいディレクトリの階層を高い順で記入
 with open(prsfile,'rb') as r:
     pcord = np.load(r)
 phicord = np.arange(-90,91,5)*(math.pi/180.)
@@ -95,8 +95,8 @@ def makeDir(parent_path,child_path):
 
 def main(child):
     for year in range(startyear,endyear+1):
-        child = np.append(child ,str(year).zfill(4))
-        dirpath = makeDir(parent,child)
+        add_year_child_path = np.append(child ,str(year).zfill(4))
+        dirpath = makeDir(parent,add_year_child_path)
         for month in range(1,13):
             for day in range(1,calendar.monthrange(year,month)[1]+1):
                 Fy, Fz, nF = makeEPflux(year,month,day)
