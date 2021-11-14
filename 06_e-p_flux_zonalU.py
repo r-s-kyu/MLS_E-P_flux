@@ -182,7 +182,7 @@ def draw():
     plt.subplots_adjust(wspace=0.15)
     # if not os.path.exists(f'./picture/monthYearMean/{month}'):
     #     os.makedirs(f'./picture/yearsmean_2020/{month}')
-    plt.savefig(f'D:/picture/study/MLS/monthYearMean/month{month}Mean_{meanstart}to{meanend}and{year}_E-Pflux.png')
+    plt.savefig(f'D:/picture/study/MLS/monthYearMean/zonalU/month{month}Mean_{meanstart}to{meanend}and{year}_E-Pflux_zonalU.png')
     plt.show()
     print(f'finish drawing!!!')
 
