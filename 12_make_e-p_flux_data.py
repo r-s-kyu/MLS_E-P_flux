@@ -70,7 +70,7 @@ def makeEPflux(year,month,day):
     devFz = np.gradient(Fz,z,axis=0)
     nablaF = devFy/(a*np.cos(phicord)) + devFz
     nablaF = ((nablaF/(a*np.cos(phicord))).T/rho).T
-    nF = nablaF*60*60*24    
+    nF = nablaF*60*60*24   # [/s/d]
     return Fy, Fz, nF
 
 # def load_zonalU(year,month,day):
@@ -101,7 +101,7 @@ def main(child):
             for day in range(1,calendar.monthrange(year,month)[1]+1):
                 Fy, Fz, nF = makeEPflux(year,month,day)
                 dates = f'{str(year).zfill(4)+str(month).zfill(2)+str(day).zfill(2)}'
-                filename = f'e-p_flux.{dates}.nyz'
+                filename = f'e-p_flux.{dates}.npz'
                 savefile =  f'{dirpath}/{filename}'
                 saveData(savefile, Fy, Fz, nF)
                 print(dates)
