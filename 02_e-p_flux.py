@@ -5,8 +5,8 @@ from datetime import date
 import os
 
 year = 2020
-month = 10
-day = 10
+month = 1
+day = 2
 fday = date(year,1,1)
 
 dc = (date(year,month,day)-fday).days + 1
@@ -113,11 +113,15 @@ q = plt.quiver(X[num:,2::mabiki], Y[num:,2::mabiki], Fy[num:,2::mabiki], Fz[num:
                 scale_units='xy', headwidth=5,scale=vector_scale, color='green',width=0.005)
 plt.title(f'{month}/{day}/{year} E-Pflux and ∇',fontsize=20)
 plt.colorbar(contf)
-if not os.path.exists(f'./picture'):
-    os.mkdir(f'./picture')
-if not os.path.exists(f'./picture/day'):
-    os.mkdir(f'./picture/day')
+if not os.path.exists(f'D:/picture'):
+    os.mkdir(f'D:/picture')
+if not os.path.exists(f'D:/picture/study'):
+    os.mkdir(f'D:/picture/study')
+if not os.path.exists(f'D:/picture/study/MLS'):
+    os.mkdir(f'D:/picture/study/MLS')
+if not os.path.exists(f'D:/picture/study/MLS/day'):
+    os.mkdir(f'D:/picture/study/MLS/day')
+if not os.path.exists(f'D:/picture/study/MLS/day/{year}'):
+    os.mkdir(f'D:/picture/study/MLS/day/{year}')
 file =  f'D:/picture/study/MLS/day/{year}/{year}{str(month).zfill(2)+str(day).zfill(2)}_E-Pflux_from_MLS.png'
-if not os.path.exists(file[:13]+f'/{year}'):
-    os.makedirs(file[:13]+f'/{year}')
 plt.savefig(file)
