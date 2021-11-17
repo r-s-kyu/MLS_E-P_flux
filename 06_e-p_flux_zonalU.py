@@ -13,7 +13,7 @@ from numpy.lib.npyio import load
 meanstart = 2010
 meanend = 2019
 year = 2020
-month = 10
+month = 7
 
 # ====================描画値===================
 vector_scale = 8.0e+5
@@ -161,7 +161,7 @@ def draw():
             title = str(year)
         # cont = axes[axnum].contour(X,Y,zonalhgt,colors='black')
         # cont = axes[y].contour(X,Y,zonalU,levels=np.linspace(-100,100,25),linewidths=0.75, cmap='plasma_r')
-        cont = axes[y].contour(X,Y,zonalU,levels=np.arange(-100,101,10),linewidths=0.75, colors='black',alpha=0.65)
+        cont = axes[y].contour(X,Y,zonalU,levels=np.arange(-100,121,10),linewidths=0.75, colors='black',alpha=0.65)
         contf = axes[y].contourf(X,Y,nablaF,interval,cmap='bwr',extend='both') #cmap='bwr_r'で色反転, extend='both'で範囲外設定
         q = axes[y].quiver(X[num:,2::mabiki], Y[num:,2::mabiki], Fy[num:,2::mabiki], Fz[num:,2::mabiki]*100,pivot='middle',
                     scale_units='xy', headwidth=5,scale=vector_scale, color='#5c6',width=0.0065,alpha=0.70)
