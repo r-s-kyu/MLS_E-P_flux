@@ -16,9 +16,9 @@ meanstart = 2010
 meanend = 2019
 year = 2020
 meanlatrange = [-75,-40]
-meanprs = 2.6101572e+01
+# meanprs = 2.6101572e+01
 # meanprs = 5.6234131e+01
-# meanprs = 100
+meanprs = 100
 notUru = 2021 #うるう年以外なら何でもよい
 movingDay = 7
 
@@ -192,7 +192,7 @@ def draw():
 
     sInd, eInd = checkDayIndex(graphStartDate, graphEndtDate)
     x = np.arange(sInd+1,eInd+1+1)
-    fig, axes = plt.subplots(1,1,figsize=(9, 6),facecolor='#ddd')
+    fig, axes = plt.subplots(1,1,figsize=(9, 6),facecolor='#fff')
     cdaylist, strDate = makeXaxis(graphStartDate,graphEndtDate)
     # date1 = date(notUru,graphStartDate[0],graphStartDate[1])
     # date2 = date(notUru,graphEndtDate[0],graphEndtDate[1])
@@ -216,9 +216,9 @@ def draw():
 
     axes.plot(x,y[sInd:eInd+1],color='red')
     axes.plot(x,yMean[sInd:eInd+1],color='blue')
-    from matplotlib.dates import DateFormatter
-    xaxis_ = axes.xaxis
-    xaxis_.set_major_formatter(DateFormatter('%m/%d'))
+    # from matplotlib.dates import DateFormatter
+    # xaxis_ = axes.xaxis
+    # xaxis_.set_major_formatter(DateFormatter('%m/%d'))
     axes.set_xticks(cdaylist)
     axes.set_xticklabels(strDate)
     axes.set_title(f'Fz intensity  prs={meanprs}hPa  {meanlatrange[0]}to{meanlatrange[1]}',fontsize=25)
