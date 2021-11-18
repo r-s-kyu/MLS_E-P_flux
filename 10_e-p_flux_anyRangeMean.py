@@ -14,7 +14,7 @@ meanstart = 2010
 meanend = 2019
 year = 2020
 month = 10
-dateRange = np.array([[9,1],[11,31]],dtype=np.int32)
+dateRange = np.array([[9,1],[11,30]],dtype=np.int32)
 
 # ====================描画値===================
 vector_scale = 8.0e+5
@@ -77,6 +77,20 @@ kind = 'dev'
 #     nF = nablaF*60*60*24    
 #     return Fy, Fz, nF
 
+
+def changednum(year,month,day):
+    dc = (date(year,month,day)-date(year,1,1)).days+1
+    return dc
+
+def changedate(year,dc):
+    month = 1
+    while (date(year,month,calendar.monthrange(year,month)[1])-date(year,1,1)).days + 1 < dc:
+        month += 1
+    day = 1
+    while dc > (date(year,month,day)-date(year,1,1)).days + 1:
+        day += 1
+    return month, day
+
 def load_zonalU(year,month,day):
     fday = date(year,1,1)
     dc = (date(year,month,day)-fday).days + 1
@@ -84,18 +98,12 @@ def load_zonalU(year,month,day):
     zonalU =np.load(savefile)
     return zonalU
 
-def changednum(year,month,day):
-    dc = (date(year,month,day)-(date(year,1,1))).days+1
-    return dc
-
-def changedate(year,dc):
-    while True:
-        
-
-
-def monthYearMean(startYear,endYear,amonth):
+def monthYearMean(startYear,endYear):
     for ayear in range(startYear,endYear+1):
-        for aday in range(1,calendar.monthrange(ayear,amonth)[1]+1):
+        sdc = changednum(ayear,dateRange[0,0],dateRange[0,1])
+        edc = changednum(ayear,dateRange[1,0],dateRange[1,1])
+        for dnum in range(sdc,edc+1):
+            amonth, aday = changedate(ayear,dnum)
             dates = f'{str(ayear).zfill(4)+str(amonth).zfill(2)+str(aday).zfill(2)}'
             loadfile = f'D:/data/MLS/e-p_flux/{ayear}/e-p_flux.{dates}.npz'
             dataz = np.load(loadfile)
@@ -118,10 +126,11 @@ def monthYearMean(startYear,endYear,amonth):
     return FyMean, FzMean, nFMean, zonalUMena
 
 
-def monthMean(ayear,dateRange):
+def monthMean(ayear):
     sdc = changednum(ayear,dateRange[0,0],dateRange[0,1])
     edc = changednum(ayear,dateRange[1,0],dateRange[1,1])
     for dnum in range(sdc,edc+1):
+        amonth, aday = changedate(ayear,dnum)
         zonalU = load_zonalU(ayear,amonth,aday)
         dates = f'{str(ayear).zfill(4)+str(amonth).zfill(2)+str(aday).zfill(2)}'
         loadfile = f'D:/data/MLS/e-p_flux/{ayear}/e-p_flux.{dates}.npz'
@@ -165,10 +174,10 @@ def draw():
     X,Y=np.meshgrid(ycord,pcord)
     for y in range(2):
         if y == 0:
-            Fy, Fz, nablaF,zonalU = monthYearMean(meanstart,meanend,month)
+            Fy, Fz, nablaF,zonalU = monthYearMean(meanstart,meanend)
             title = f'{meanstart}to{meanend} mean'
         else:
-            Fy, Fz, nablaF,zonalU = monthMean(year,month)
+            Fy, Fz, nablaF,zonalU = monthMean(year)
             title = str(year)
         # cont = axes[axnum].contour(X,Y,zonalhgt,colors='black')
         # cont = axes[y].contour(X,Y,zonalU,levels=np.linspace(-100,100,25),linewidths=0.75, cmap='plasma_r')
@@ -178,7 +187,8 @@ def draw():
                     scale_units='xy', headwidth=5,scale=vector_scale, color='#5c6',width=0.0065,alpha=0.70)
         axes[y].set_title(f'{title}',fontsize=15)
         axes[y].clabel(cont, cont.levels[::1], inline=True, fontsize=12)
-    fig.suptitle(f'Month:{month} mean E-Pflux and U',fontsize=20)
+    str_range = f'{str(dateRange[0,0]).zfill(2)}{str(dateRange[0,1]).zfill(2)}to{str(dateRange[1,0]).zfill(2)}{str(dateRange[1,1]).zfill(2)}'
+    fig.suptitle(f'{str_range}Mean E-Pflux and U',fontsize=20)
     axpos = axes[0].get_position()
     # axpos2 = axes[0].get_position()
 
@@ -193,7 +203,7 @@ def draw():
     plt.subplots_adjust(wspace=0.15)
     # if not os.path.exists(f'./picture/monthYearMean/{month}'):
     #     os.makedirs(f'./picture/yearsmean_2020/{month}')
-    plt.savefig(f'D:/picture/study/MLS/monthYearMean/zonalU/month{month}Mean_{meanstart}to{meanend}and{year}_E-Pflux_zonalU.png')
+    plt.savefig(f'D:/picture/study/MLS/anyRangeMean/zonalU/range{str_range}Mean_10YearsMean_and_{year}_E-Pflux_zonalU.png')
     plt.show()
     print(f'finish drawing!!!')
 
