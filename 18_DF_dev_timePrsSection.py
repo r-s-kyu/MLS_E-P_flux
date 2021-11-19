@@ -186,73 +186,88 @@ def caldata2(ayear):
     print(f'nablaF:{nablaF2.shape}')
     print(f'zonalU:{zonalU2.shape}')
     return nablaF2,zonalU2
-# year = 2020
-for year in range(2010,2021):
-    nablaF1,zonalU1 = caldata2(year)
-    # def draw():
+year = 2020
+# for year in range(2010,2021):
+nablaF1,zonalU1 = caldata2(year)
+# def draw():
+
+devDF = nablaF1 - nablaF0
+devU = zonalU1 - zonalU0
+
+fig, axes = plt.subplots(1,2,figsize=(11, 6),facecolor='#ddd',sharex=True,sharey=True)
+axes[0].set_ylim(lim,0.1)
+axes[0].set_xlim(latrange[0],latrange[1])
+axes[0].set_yscale('log')
+axes[0].set_yticks(yticks)
+axes[0].set_yticklabels(ylabel)
+# axes[0].set_xlabel('')
+# axes[1].set_xlabel('LAT')
+# axes[0].set_ylabel('pressure',labelpad=-10)
+axes[0].set_ylabel('pressure')
+# axes[1].set_ylabel('pressure')
+
+for prsnum in range(len(pcord)):
+    if pcord[prsnum] == lim:
+        num = prsnum
+sInd, eInd = checkDayIndex(graphStartDate, graphEndtDate)
+xcord = np.arange(sInd+1,eInd+1+1)
+cdaylist, strDate = makeXaxis(graphStartDate,graphEndtDate)
+axes[0].set_xticks(cdaylist)
+axes[0].set_xticklabels(strDate)
+axes[0].set_xlim(cdaylist[0],cdaylist[-1])
+title0 = f'deviation DF {year}-10Mean'
+title1 = f'deviation U {year}-10Mean'   
 
 
+min_value ,max_value = -50, 50
+div=40      #図を描くのに何色用いるか
+interval=np.linspace(min_value,max_value,div+1)
 
-    fig, axes = plt.subplots(1,2,figsize=(15, 6),facecolor='#fff',sharex=True,sharey=True)
-    axes[0].set_ylim(lim,0.1)
-    axes[0].set_xlim(latrange[0],latrange[1])
-    axes[0].set_yscale('log')
-    axes[0].set_yticks(yticks)
-    axes[0].set_yticklabels(ylabel)
-    # axes[0].set_xlabel('')
-    # axes[1].set_xlabel('LAT')
-    # axes[0].set_ylabel('pressure',labelpad=-10)
-    axes[0].set_ylabel('pressure')
-    # axes[1].set_ylabel('pressure')
+min_value ,max_value = -30, 30
+div=40      #図を描くのに何色用いるか
+interval2=np.linspace(min_value,max_value,div+1)
+X,Y=np.meshgrid(xcord,pcord)
 
-    for prsnum in range(len(pcord)):
-        if pcord[prsnum] == lim:
-            num = prsnum
-    sInd, eInd = checkDayIndex(graphStartDate, graphEndtDate)
-    xcord = np.arange(sInd+1,eInd+1+1)
-    cdaylist, strDate = makeXaxis(graphStartDate,graphEndtDate)
-    axes[0].set_xticks(cdaylist)
-    axes[0].set_xticklabels(strDate)
-    axes[0].set_xlim(cdaylist[0],cdaylist[-1])
-    title0 = f'{meanstart}to{meanend} mean'
-    title1 = str(year)    
+# cont = axes[axnum].contour(X,Y,zonalhgt,colors='black')
+# cont = axes[y].contour(X,Y,zonalU,levels=np.linspace(-100,100,25),linewidths=0.75, cmap='plasma_r')
+cont0 = axes[0].contour(X,Y,nablaF1[:,sInd:eInd+1],linewidths=0.75, colors='black',alpha=0.65)
+contf0 = axes[0].contourf(X,Y,devDF[:,sInd:eInd+1],interval,cmap='bwr',extend='both') #cmap='bwr_r'で色反転, extend='both'で範囲外設定
+cont1 = axes[1].contour(X,Y,zonalU1[:,sInd:eInd+1],levels=np.array(np.arange(-100,121,10),dtype=np.int32),linewidths=0.75, colors='black',alpha=0.65)
+contf1 = axes[1].contourf(X,Y,devU[:,sInd:eInd+1],interval2,cmap='bwr',extend='both') #cmap='bwr_r'で色反転, extend='both'で範囲外設定
+# q = axes[y].quiver(X[num:,2::mabiki], Y[num:,2::mabiki], Fy[num:,2::mabiki], Fz[num:,2::mabiki]*100,pivot='middle',
+#             scale_units='xy', headwidth=5,scale=vector_scale, color='#5c6',width=0.0065,alpha=0.70)
+axes[0].set_title(f'{title0}',fontsize=15)
+axes[0].clabel(cont0, cont0.levels[::1], fmt='%d', inline=True, fontsize=12)
+axes[1].set_title(f'{title1}',fontsize=15)
+axes[1].clabel(cont1, cont1.levels[::1], fmt='%d', inline=True, fontsize=12)
 
+# cbar_ax = fig.add_axes([])
+# fig.colorbar(contf0)
+# fig.colorbar(contf1)
+# fig.colorbar()
 
-    min_value ,max_value = -80, 80
-    div=40      #図を描くのに何色用いるか
-    interval=np.linspace(min_value,max_value,div+1)
-    X,Y=np.meshgrid(xcord,pcord)
-
-    # cont = axes[axnum].contour(X,Y,zonalhgt,colors='black')
-    # cont = axes[y].contour(X,Y,zonalU,levels=np.linspace(-100,100,25),linewidths=0.75, cmap='plasma_r')
-    cont0 = axes[0].contour(X,Y,zonalU0[:,sInd:eInd+1],levels=np.array(np.arange(-100,121,10),dtype=np.int32),linewidths=0.75, colors='black',alpha=0.65)
-    contf0 = axes[0].contourf(X,Y,nablaF0[:,sInd:eInd+1],interval,cmap='bwr',extend='both') #cmap='bwr_r'で色反転, extend='both'で範囲外設定
-    cont1 = axes[1].contour(X,Y,zonalU1[:,sInd:eInd+1],levels=np.array(np.arange(-100,121,10),dtype=np.int32),linewidths=0.75, colors='black',alpha=0.65)
-    contf1 = axes[1].contourf(X,Y,nablaF1[:,sInd:eInd+1],interval,cmap='bwr',extend='both') #cmap='bwr_r'で色反転, extend='both'で範囲外設定
-    # q = axes[y].quiver(X[num:,2::mabiki], Y[num:,2::mabiki], Fy[num:,2::mabiki], Fz[num:,2::mabiki]*100,pivot='middle',
-    #             scale_units='xy', headwidth=5,scale=vector_scale, color='#5c6',width=0.0065,alpha=0.70)
-    axes[0].set_title(f'{title0}',fontsize=15)
-    axes[0].clabel(cont0, cont0.levels[::1], fmt='%d', inline=True, fontsize=12)
-    axes[1].set_title(f'{title1}',fontsize=15)
-    axes[1].clabel(cont1, cont1.levels[::1], fmt='%d', inline=True, fontsize=12)
-
-    fig.suptitle(f'E-Pflux and U',fontsize=20)
-    axpos = axes[0].get_position()
-    # axpos2 = axes[0].get_position()
-
-    cbar_ax = fig.add_axes([0.81, axpos.y0, 0.02, axpos.height])
-    fig.colorbar(contf1,cax=cbar_ax)
-    fig.text(0.77,0.90,'∇F[m/s/d]',size=14.5)
-    # cbar_ax2 = fig.add_axes([0.90,axpos.y0, 0.02,axpos.height])
-    # fig.colorbar(cont,cax=cbar_ax2)
-    # fig.text(0.89,0.90,'U[m/s]',size=14.5)
-    plt.subplots_adjust(right=0.78)
-    plt.subplots_adjust(left=0.1)
-    plt.subplots_adjust(wspace=0.15)
-    # if not os.path.exists(f'./picture/monthYearMean/{month}'):
-    #     os.makedirs(f'./picture/yearsmean_2020/{month}')
-    plt.savefig(f'D:/picture/study/MLS/e-p_flux/timePrsSection/latWeightMean/e-p_flux_timePrsSection_10Mean_and_{year}_lat{meanlatrange[0]}to{meanlatrange[1]}Mean.png')
-    plt.show()
+def colorbar(fig, contf, index1=0.95, index2=0.1, index3=0.02, index4=0.8, direction='vertical', label='test'):
+        cbaxes = fig.add_axes([index1, index2, index3, index4]) #x位置, y位置, 太さ, 長さ 
+        fig.colorbar(contf, cax = cbaxes, orientation=direction, label=label)
+        return fig
+fig = colorbar(fig,contf0,index1=0.91)
+fig = colorbar(fig,contf1,index1=0.45)
+fig.suptitle(f'E-Pflux and U',fontsize=20)
+fig.subplots_adjust(wspace=0.33)
+# axpos = axes[0].get_position()
+# cbar_ax = fig.add_axes([0.81, axpos.y0, 0.02, axpos.height])
+# fig.colorbar(contf0,cax=cbar_ax)
+# fig.text(0.77,0.90,'∇F[m/s/d]',size=14.5)
+# cbar_ax2 = fig.add_axes([0.50,axpos.y0, 0.02,axpos.height])
+# fig.colorbar(contf1,cax=cbar_ax2)
+# fig.text(0.89,0.90,'U[m/s]',size=14.5)
+plt.subplots_adjust(right=0.88)
+plt.subplots_adjust(left=0.1)
+# plt.subplots_adjust(wspace0.15)
+# if not os.path.exists(f'./picture/monthYearMean/{month}'):
+#     os.makedirs(f'./picture/yearsmean_2020/{month}')
+plt.savefig(f'D:/picture/study/MLS/e-p_flux/timePrsSection/latWeightMean/e-p_flux_timePrsSection_10Mean_and_{year}_lat{meanlatrange[0]}to{meanlatrange[1]}Mean.png')
+plt.show()
 
 print(f'finish drawing!!!')
 

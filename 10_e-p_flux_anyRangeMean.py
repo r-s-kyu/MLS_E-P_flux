@@ -152,7 +152,7 @@ def monthMean(ayear):
 
     
 def draw():
-    fig, axes = plt.subplots(1,2,figsize=(9, 6),facecolor='#ddd',sharex=True,sharey=True)
+    fig, axes = plt.subplots(1,2,figsize=(9, 6),facecolor='#fff',sharex=True,sharey=True)
     axes[0].set_ylim(lim,1.0)
     axes[0].set_xlim(latrange[0],latrange[1])
     axes[0].set_yscale('log')

@@ -240,6 +240,7 @@ def draw():
     axes.fill_between(x,stddown[sInd:eInd+1],stdup[sInd:eInd+1],color='#ddd')
     axes.plot(x,y[sInd:eInd+1],color='red')
     axes.plot(x,yMean[sInd:eInd+1],color='blue')
+    axes.plot(x,np.zeros((len(x)),dtype=np.float32),color='black',linewidth=0.7)
     # from matplotlib.dates import DateFormatter
     # xaxis_ = axes.xaxis
     # xaxis_.set_major_formatter(DateFormatter('%m/%d'))

@@ -16,11 +16,11 @@ meanstart = 2010
 meanend = 2019
 year = 2020
 month = 8
-stdnum = 2
+stdnum = 1
 
 meanlatrange = [-75,-40]
 # meanprs = 1.4677993e+00
-meanprs = 10
+meanprs = 1
 notUru = 2021 #うるう年以外なら何でもよい
 grid = 5
 # [1.0000000e+03 8.2540417e+02 6.8129205e+02 5.6234131e+02 4.6415887e+02
@@ -197,66 +197,68 @@ def makeXaxis(datelist1,datelist2):
         strDatelist = np.append(strDatelist,strdate)
     return cdaylist, strDatelist
 
+for year in range(2010,2021):
+    meanDF, meanU ,stdDF,stdU = monthYearMean(meanstart, meanend)
+    upstdDF = meanDF+stdDF*stdnum
+    downstdDF = meanDF-stdDF*stdnum
+    upstdU = meanU+stdU*stdnum
+    downstdU = meanU-stdU*stdnum
 
-meanDF, meanU ,stdDF,stdU = monthYearMean(meanstart, meanend)
-upstdDF = meanDF+stdDF*stdnum
-downstdDF = meanDF-stdDF*stdnum
-upstdU = meanU+stdU*stdnum
-downstdU = meanU-stdU*stdnum
+    Df,U = monthMean(year)
+    print("start yMean")
+    # yMean = movingMean(yMean)
+    print(meanU)
+    # y = movingMean(y)
+    print("start 2020")
+    print(Df.shape)
 
-Df,U = monthMean(year)
-print("start yMean")
-# yMean = movingMean(yMean)
-print(meanU)
-# y = movingMean(y)
-print("start 2020")
-print(Df.shape)
-
-sInd, eInd = checkDayIndex(graphStartDate, graphEndtDate)
-x = np.arange(sInd+1,eInd+1+1)
-fig, axes = plt.subplots(2,1,figsize=(9, 6),facecolor='#fff')
-cdaylist, strDate = makeXaxis(graphStartDate,graphEndtDate)
-# date1 = date(notUru,graphStartDate[0],graphStartDate[1])
-# date2 = date(notUru,graphEndtDate[0],graphEndtDate[1])
-# delta = timedelta(days=1)
-# x = drange(date1,date2+delta,delta)
-# print(x.shape)
-# print(y.shape)
-# print(yMean.shape)
-
-
-axes[0].set_ylim(scalerange[0],scalerange[1])
-# axes[0].set_xlim(latrange[0],latrange[1])
-# axes[0].set_yscale('log')
-# axes[0].set_yticks(yticks)
-# axes[0].set_yticklabels(ylabel)
-# axes.set_xlabel('day')
-# axes[1].set_xlabel('LAT')
-# axes[0].set_ylabel('pressure',labelpad=-10)
-axes[0].set_ylabel('DF',fontsize=15)
-axes[1].set_ylabel('U',fontsize=15)
-# axes[1].set_ylabel('pressure')
-axes[0].fill_between(x,downstdDF[sInd:eInd+1],upstdDF[sInd:eInd+1],color='#ddd')
-axes[0].plot(x,Df[sInd:eInd+1],color='red',linewidth=1,)
-axes[0].plot(x,meanDF[sInd:eInd+1],color='blue',linestyle='solid')
-# axes2 = axes.twinx()
-axes[1].fill_between(x,downstdU[sInd:eInd+1],upstdU[sInd:eInd+1],color='#ddd')
-axes[1].plot(x,U[sInd:eInd+1],color='red',linestyle='dashed')
-axes[1].plot(x,meanU[sInd:eInd+1],color='blue',linestyle='dashed')
+    sInd, eInd = checkDayIndex(graphStartDate, graphEndtDate)
+    x = np.arange(sInd+1,eInd+1+1)
+    fig, axes = plt.subplots(2,1,figsize=(9, 6),facecolor='#fff')
+    cdaylist, strDate = makeXaxis(graphStartDate,graphEndtDate)
+    # date1 = date(notUru,graphStartDate[0],graphStartDate[1])
+    # date2 = date(notUru,graphEndtDate[0],graphEndtDate[1])
+    # delta = timedelta(days=1)
+    # x = drange(date1,date2+delta,delta)
+    # print(x.shape)
+    # print(y.shape)
+    # print(yMean.shape)
 
 
-# from matplotlib.dates import DateFormatter
-# xaxis_ = axes.xaxis
-# xaxis_.set_major_formatter(DateFormatter('%m/%d'))
-axes[0].set_xticks(cdaylist)
-axes[0].set_xticklabels(strDate)
-axes[1].set_xticks(cdaylist)
-axes[1].set_xticklabels(strDate)
-axes[0].set_title(f'prs={meanprs:.2f}hPa  {meanlatrange[0]}to{meanlatrange[1]}',fontsize=15)
-axes[0].grid(True)
-axes[1].grid(True)
-plt.savefig(f'D:/picture/study/MLS/e-p_flux/DF_U/prs{meanprs:.07f}_lat{meanlatrange[0]}to{meanlatrange[1]}Mean_E-Pflux_DF.png')
-plt.show()
+    axes[0].set_ylim(scalerange[0],scalerange[1])
+    # axes[0].set_xlim(latrange[0],latrange[1])
+    # axes[0].set_yscale('log')
+    # axes[0].set_yticks(yticks)
+    # axes[0].set_yticklabels(ylabel)
+    # axes.set_xlabel('day')
+    # axes[1].set_xlabel('LAT')
+    # axes[0].set_ylabel('pressure',labelpad=-10)
+    axes[0].set_ylabel('DF',fontsize=15)
+    axes[1].set_ylabel('U',fontsize=15)
+    # axes[1].set_ylabel('pressure')
+    axes[0].fill_between(x,downstdDF[sInd:eInd+1],upstdDF[sInd:eInd+1],color='#ddd')
+    axes[0].plot(x,Df[sInd:eInd+1],color='red',linewidth=1,)
+    axes[0].plot(x,meanDF[sInd:eInd+1],color='blue',linestyle='solid')
+    # axes2 = axes.twinx()
+    axes[1].fill_between(x,downstdU[sInd:eInd+1],upstdU[sInd:eInd+1],color='#ddd')
+    axes[1].plot(x,U[sInd:eInd+1],color='red',linestyle='dashed')
+    axes[1].plot(x,meanU[sInd:eInd+1],color='blue',linestyle='dashed')
+    axes[0].plot(x,np.zeros((len(x)),dtype=np.float32),color='black',linewidth=0.7)
+    axes[1].plot(x,np.zeros((len(x)),dtype=np.float32),color='black',linewidth=0.7)
+
+
+    # from matplotlib.dates import DateFormatter
+    # xaxis_ = axes.xaxis
+    # xaxis_.set_major_formatter(DateFormatter('%m/%d'))
+    axes[0].set_xticks(cdaylist)
+    axes[0].set_xticklabels(strDate)
+    axes[1].set_xticks(cdaylist)
+    axes[1].set_xticklabels(strDate)
+    axes[0].set_title(f'prs={meanprs:.2f}hPa  {meanlatrange[0]}to{meanlatrange[1]} red:{year} blue:10mean',fontsize=15)
+    axes[0].grid(True)
+    axes[1].grid(True)
+    plt.savefig(f'D:/picture/study/MLS/e-p_flux/DF_U/std/prs{meanprs:.07f}_lat{meanlatrange[0]}to{meanlatrange[1]}Mean_{year}_DF_U.png')
+    plt.show()
 print(f'finish drawing!!!')
 
 print(f'finish calculation')
