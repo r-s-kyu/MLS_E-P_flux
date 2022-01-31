@@ -204,6 +204,7 @@ with open(savefile,'wb') as f:
 # sort_lon = np.sort(lon_origin)
 # print(sort_lon)
 # %%
+import numpy as np
 prsfile = f'./text/prs_values.npy'
 with open(prsfile,'rb') as r:
     pcord = np.load(r)
