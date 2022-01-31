@@ -1,5 +1,6 @@
 
 # %%
+import imp
 import numpy as np
 import math
 from datetime import date
@@ -25,7 +26,8 @@ grid = 5
 graphStartDate = [7,1]
 graphEndtDate = [12,31]
 # vector_scale = 8.0e+5
-lim = 100
+# lim = 100
+lim = 3.1622775e+02
 mabiki = 1
 yticks=([100, 50, 10, 5, 1, 0.1])
 ylabel=(["100", "50", "10", "5", "1", "0.1"])
@@ -42,6 +44,12 @@ prsfile = f'./text/prs_values.npy'
 with open(prsfile,'rb') as r:
     pcord = np.load(r)
 phicord = np.arange(-90,91,5)*(math.pi/180.)
+characterMLR = []
+for lat in meanlatrange:
+    if lat > 0:
+        characterMLR.append(f'{abs(lat)}N')
+    else:
+        characterMLR.append(f'{abs(lat)}S')
 # xcord = np.arange(-90, 90.1, 5)
 a = 6.37e+6
 R = 287
@@ -187,13 +195,13 @@ def caldata2(ayear):
     print(f'zonalU:{zonalU2.shape}')
     return nablaF2,zonalU2
 # year = 2020
-for year in range(2010,2021):
+for year in range(2020,2021):
     nablaF1,zonalU1 = caldata2(year)
     # def draw():
 
 
 
-    fig, axes = plt.subplots(1,2,figsize=(15, 6),facecolor='#fff',sharex=True,sharey=True)
+    fig, axes = plt.subplots(1,2,figsize=(16, 6),facecolor='#fff',sharex=True,sharey=True)
     axes[0].set_ylim(lim,0.1)
     axes[0].set_xlim(latrange[0],latrange[1])
     axes[0].set_yscale('log')
@@ -214,12 +222,12 @@ for year in range(2010,2021):
     axes[0].set_xticks(cdaylist)
     axes[0].set_xticklabels(strDate)
     axes[0].set_xlim(cdaylist[0],cdaylist[-1])
-    title0 = f'{meanstart}to{meanend} mean'
+    title0 = f'{meanstart}-{meanend}'
     title1 = str(year)    
 
 
-    min_value ,max_value = -80, 80
-    div=40      #図を描くのに何色用いるか
+    min_value ,max_value = -20, 20
+    div=80     #図を描くのに何色用いるか
     interval=np.linspace(min_value,max_value,div+1)
     X,Y=np.meshgrid(xcord,pcord)
 
@@ -236,19 +244,24 @@ for year in range(2010,2021):
     axes[1].set_title(f'{title1}',fontsize=15)
     axes[1].clabel(cont1, cont1.levels[::1], fmt='%d', inline=True, fontsize=12)
 
-    fig.suptitle(f'E-Pflux and U',fontsize=20)
+    fig.suptitle(f'{characterMLR[1]}-{characterMLR[0]} Mean  E-P flux and U',fontsize=20)
     axpos = axes[0].get_position()
     # axpos2 = axes[0].get_position()
 
-    cbar_ax = fig.add_axes([0.81, axpos.y0, 0.02, axpos.height])
+    cbar_ax = fig.add_axes([0.81, axpos.y0, 0.015, axpos.height])
     fig.colorbar(contf1,cax=cbar_ax)
-    fig.text(0.77,0.90,'∇F[m/s/d]',size=14.5)
+    fig.text(0.785,0.892,'DF[m/s/d]',size=13.5)
+    # fig.annotate('->', xy=[0.6,0,1], xytext=[0.8,0.1],
+    #     arrowprops=dict(shrink=0,width=1,headwidth=8,
+    #                     headlength=10, connectionstyle='arc3',
+    #                     facecolor='gray', edgecolor='gray'))
+    
     # cbar_ax2 = fig.add_axes([0.90,axpos.y0, 0.02,axpos.height])
     # fig.colorbar(cont,cax=cbar_ax2)
     # fig.text(0.89,0.90,'U[m/s]',size=14.5)
     plt.subplots_adjust(right=0.78)
     plt.subplots_adjust(left=0.1)
-    plt.subplots_adjust(wspace=0.15)
+    plt.subplots_adjust(wspace=0.12)
     # if not os.path.exists(f'./picture/monthYearMean/{month}'):
     #     os.makedirs(f'./picture/yearsmean_2020/{month}')
     plt.savefig(f'D:/picture/study/MLS/e-p_flux/timePrsSection/latWeightMean/e-p_flux_timePrsSection_10Mean_and_{year}_lat{meanlatrange[0]}to{meanlatrange[1]}Mean.png')
@@ -262,4 +275,3 @@ print(f'finish drawing!!!')
 
 # if __name__ == '__main__':
 #     main()
-
