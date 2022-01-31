@@ -168,14 +168,14 @@ def draw():
         if pcord[prsnum] == lim:
             num = prsnum
 
-    min_value ,max_value = -80, 80
-    div=40      #図を描くのに何色用いるか
+    min_value ,max_value = -20, 20
+    div=80      #図を描くのに何色用いるか
     interval=np.linspace(min_value,max_value,div+1)
     X,Y=np.meshgrid(ycord,pcord)
     for y in range(2):
         if y == 0:
             Fy, Fz, nablaF,zonalU = monthYearMean(meanstart,meanend)
-            title = f'{meanstart}to{meanend} mean'
+            title = f'{meanstart}-{meanend}'
         else:
             Fy, Fz, nablaF,zonalU = monthMean(year)
             title = str(year)
@@ -184,17 +184,23 @@ def draw():
         cont = axes[y].contour(X,Y,zonalU,levels=np.arange(-100,101,10),linewidths=0.75, colors='black',alpha=0.65)
         contf = axes[y].contourf(X,Y,nablaF,interval,cmap='bwr',extend='both') #cmap='bwr_r'で色反転, extend='both'で範囲外設定
         q = axes[y].quiver(X[num:,2::mabiki], Y[num:,2::mabiki], Fy[num:,2::mabiki], Fz[num:,2::mabiki]*100,pivot='middle',
-                    scale_units='xy', headwidth=5,scale=vector_scale, color='#5c6',width=0.0065,alpha=0.70)
+                    scale_units='xy', headwidth=5,label='8e+5',scale=vector_scale, color='#5c6',width=0.0065,alpha=1.)
         axes[y].set_title(f'{title}',fontsize=15)
-        axes[y].clabel(cont, cont.levels[::1], inline=True, fontsize=12)
-    str_range = f'{str(dateRange[0,0]).zfill(2)}{str(dateRange[0,1]).zfill(2)}to{str(dateRange[1,0]).zfill(2)}{str(dateRange[1,1]).zfill(2)}'
-    fig.suptitle(f'{str_range}Mean E-Pflux and U',fontsize=20)
+        axes[y].clabel(cont, cont.levels[::1], fmt='%d', inline=True, fontsize=12)
+    str_range = f'{str(dateRange[0,0]).zfill(2)}/{str(dateRange[0,1]).zfill(2)}-{str(dateRange[1,0]).zfill(2)}/{str(dateRange[1,1]).zfill(2)}'
+    str_range2 = f'{str(dateRange[0,0]).zfill(2)}{str(dateRange[0,1]).zfill(2)}to{str(dateRange[1,0]).zfill(2)}{str(dateRange[1,1]).zfill(2)}'
+    fig.suptitle(f'{str_range} Mean E-Pflux and U',fontsize=20)
     axpos = axes[0].get_position()
     # axpos2 = axes[0].get_position()
 
     cbar_ax = fig.add_axes([0.81, axpos.y0, 0.02, axpos.height])
     fig.colorbar(contf,cax=cbar_ax)
-    fig.text(0.77,0.90,'∇F[m/s/d]',size=14.5)
+    fig.text(0.783,0.895,'DF[m/s/d]',size=13.5)
+    fig.text(0.77,0.04,f'Fy:{vector_scale:.1E}',size=12.0,color='#060')
+    axes[1].annotate('->', (-30,150),annotation_clip=True)
+    # arrowprops=dict(shrink=0,width=1,headwidth=8,
+    #                 headlength=10, connectionstyle='arc3',
+    #                 facecolor='gray', edgecolor='gray'))
     # cbar_ax2 = fig.add_axes([0.90,axpos.y0, 0.02,axpos.height])
     # fig.colorbar(cont,cax=cbar_ax2)
     # fig.text(0.89,0.90,'U[m/s]',size=14.5)
@@ -203,7 +209,7 @@ def draw():
     plt.subplots_adjust(wspace=0.15)
     # if not os.path.exists(f'./picture/monthYearMean/{month}'):
     #     os.makedirs(f'./picture/yearsmean_2020/{month}')
-    plt.savefig(f'D:/picture/study/MLS/anyRangeMean/zonalU/range{str_range}Mean_10YearsMean_and_{year}_E-Pflux_zonalU.png')
+    plt.savefig(f'D:/picture/study/MLS/anyRangeMean/zonalU/range{str_range2}Mean_10YearsMean_and_{year}_E-Pflux_zonalU.png')
     plt.show()
     print(f'finish drawing!!!')
 
