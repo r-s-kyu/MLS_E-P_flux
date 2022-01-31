@@ -43,12 +43,6 @@ prsfile = f'./text/prs_values.npy'
 with open(prsfile,'rb') as r:
     pcord = np.load(r)
 phicord = np.arange(-90,91,5)*(math.pi/180.)
-characterMLR = []
-for lat in meanlatrange:
-    if lat > 0:
-        characterMLR.append(f'{abs(lat)}N')
-    else:
-        characterMLR.append(f'{abs(lat)}S')
 # xcord = np.arange(-90, 90.1, 5)
 a = 6.37e+6
 R = 287
@@ -259,7 +253,7 @@ def colorbar(fig, contf, index1=0.95, index2=0.1, index3=0.02, index4=0.8, direc
         return fig
 fig = colorbar(fig,contf0,index1=0.91)
 fig = colorbar(fig,contf1,index1=0.45)
-fig.suptitle(f'{characterMLR[1]}-{characterMLR[0]} Mean  E-Pflux and U',fontsize=20)
+fig.suptitle(f'E-Pflux and U',fontsize=20)
 fig.subplots_adjust(wspace=0.33)
 # axpos = axes[0].get_position()
 # cbar_ax = fig.add_axes([0.81, axpos.y0, 0.02, axpos.height])

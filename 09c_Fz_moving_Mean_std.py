@@ -17,7 +17,7 @@ from numpy.lib.npyio import load
 meanstart = 2010
 meanend = 2019
 year = 2020
-meanlatrange = [-75,-40]
+meanlatrange = [-75,-60]
 # meanprs = 2.6101572e+01
 # meanprs = 5.6234131e+01
 meanprs = 100
@@ -246,7 +246,7 @@ def draw():
     # xaxis_.set_major_formatter(DateFormatter('%m/%d'))
     axes.set_xticks(cdaylist)
     axes.set_xticklabels(strDate)
-    axes.set_title(f'Fz intensity  prs={meanprs}hPa red:{year} latWeightMean {meanlatrange[0]}to{meanlatrange[1]}',fontsize=20)
+    axes.set_title(f'Fz intensity  prs={meanprs}hPa red:{year} {meanlatrange[0]}to{meanlatrange[1]}',fontsize=20)
     plt.grid(True)
     plt.savefig(f'D:/picture/study/MLS/Fz_intensity/movingMean_latWeightMean/std/prs{meanprs}_lat{meanlatrange[0]}to{meanlatrange[1]}Mean_E-Pflux_Fz_intensity.png')
     plt.show()

@@ -18,7 +18,8 @@ from numpy.lib.npyio import load
 meanstart = 2010
 meanend = 2019
 # year = 2020
-year, month, day = 2020, 9, 20
+year, month, day = 2020, 10, 11
+meanmonth = 10
 
 meanlatrange = [-75,-40]
 # meanprs = 2.6101572e+01
@@ -118,7 +119,7 @@ def load_zonalU(year,month,day):
     # print(dsU.shape)
     return dsU
 
-def cal_refractive_index(dsU,year,month,day,k):
+def cal_refractive_index(dsU,k):
     # fday = date(year,1,1)
     # dc = (date(year,month,day)-fday).days + 1
     ubar_zdev = xr.DataArray(np.gradient(dsU,zcord,axis=0),
@@ -149,9 +150,57 @@ def cal_refractive_index(dsU,year,month,day,k):
     return nk_2
 
 
+def monthYearMean(startYear,endYear):
+    # notUru = 2021
+    w_lat = np.broadcast_to(cosphi,(yearnum,len(cosphi)))
+    dc = (date(notUru,12,31)-date(notUru,1,1)).days+1
+    yearMeanFz = np.zeros((dc),dtype=np.float32)
+    yearStdFz = np.zeros((dc),dtype=np.float32)
+    amonth = meanmonth
+    day_count = 0
+    for aday in range(1,calendar.monthrange(notUru,amonth)[1]+1): #うるう年でなければ何でもよい
+        # dnum = (date(notUru,amonth,aday)-date(notUru,1,1)).days+1
+        fz_year = np.zeros((endYear+1-startYear),np.float32)
+        for ayear in range(startYear,endYear+1):
+            dsU = load_zonalU(ayear,amonth,aday)
+            zk_2 = cal_refractive_index(dsU,wn)
+            if day_count == 0:
+                sum_zk_2 = zk_2
+            else:
+                sum_zk_2 =+ zk_2
+            day_count = +1
+    mean_zk_2 = sum_zk_2/day_count
+    print(f'finish YearMean nk!')
+    return mean_zk_2
+
+
+def monthMean(ayear):
+    # notUru = 2021
+    dc = (date(notUru,12,31)-date(notUru,1,1)).days+1
+    oneYearMeanFz = np.zeros((dc),dtype=np.float32)
+    w_lat = cosphi
+    for amonth in range(1,13):
+        for aday in range(1,calendar.monthrange(notUru,amonth)[1]+1): #うるう年でなければ何でもよい
+            dnum = (date(notUru,amonth,aday)-date(notUru,1,1)).days+1
+            dates = f'{str(ayear).zfill(4)+str(amonth).zfill(2)+str(aday).zfill(2)}'
+            loadfile = f'D:/data/MLS/e-p_flux/{ayear}/e-p_flux.{dates}.npz'
+            dataz = np.load(loadfile)
+            Fz = dataz["Fz"]
+            fz_1d = np.zeros((latIndex[1]-latIndex[0]+1),np.float32)
+            for ind in range(latIndex[0],latIndex[1]+1):
+                fz_1d[ind-latIndex[0]] = Fz[prsInd,ind]
+
+                # if ind == latIndex[0]:
+                #     fz_1d = Fz[prsInd,ind]
+                # else:
+                #     fz_1d = np.append(fz_1d, Fz[prsInd,ind])
+            oneYearMeanFz[dnum-1] = np.nansum(fz_1d*w_lat)/np.sum(w_lat[~np.isnan(fz_1d)])
+    print(f'finish Fz {ayear}!')
+    return oneYearMeanFz
+
 def draw():
     dsU = load_zonalU(year,month,day)
-    zk_2 = cal_refractive_index(dsU,year,month,day,wn)
+    zk_2 = cal_refractive_index(dsU,wn)
     zk_2 = zk_2*xr_cosphi**2*a**2
     print(zk_2.shape)
     print(zk_2)
@@ -181,7 +230,6 @@ def draw():
     # if not os.path.exists(f'./picture/monthYearMean/{month}'):
     #     os.makedirs(f'./picture/yearsmean_2020/{month}')
     plt.savefig(f'D:/picture/study/MLS/nk_2/{year}{str(month).zfill(2)+str(day).zfill(2)}_nk_2.png')
-    plt.show()
     print(f'finish drawing!!!')
 
 def main():
@@ -201,60 +249,9 @@ if __name__ == '__main__':
 #     return zonalT
 
 
-# def monthYearMean(startYear,endYear):
-#     # notUru = 2021
-#     w_lat = np.broadcast_to(cosphi,(yearnum,len(cosphi)))
-#     dc = (date(notUru,12,31)-date(notUru,1,1)).days+1
-#     yearMeanFz = np.zeros((dc),dtype=np.float32)
-#     yearStdFz = np.zeros((dc),dtype=np.float32)
-#     for amonth in range(1,13):
-#         for aday in range(1,calendar.monthrange(notUru,amonth)[1]+1): #うるう年でなければ何でもよい
-#             dnum = (date(notUru,amonth,aday)-date(notUru,1,1)).days+1
-#             fz_year = np.zeros((endYear+1-startYear),np.float32)
-#             for ayear in range(startYear,endYear+1):
-#                 fz_lat = np.zeros((latIndex[1]-latIndex[0]+1),np.float32)
-
-#                 dates = f'{str(ayear).zfill(4)+str(amonth).zfill(2)+str(aday).zfill(2)}'
-#                 loadfile = f'D:/data/MLS/e-p_flux/{ayear}/e-p_flux.{dates}.npz'
-#                 dataz = np.load(loadfile)
-#                 Fz = dataz["Fz"]
-#                 for ind in range(latIndex[0],latIndex[1]+1):
-#                     fz_lat[ind-latIndex[0]] = Fz[prsInd,ind]
-#                 fzlatMean = np.nanmean(fz_lat)
-#                 fz_year[ayear-startYear] = fzlatMean
-#             # yearMeanFz[dnum-1] = np.nanmean(fz_1d)
-#             yearMeanFz[dnum-1] = np.nanmean(fz_year)
-#             yearStdFz[dnum-1] = np.nanstd(fz_year)
-#             stdup = yearMeanFz+yearStdFz*stdTimes
-#             stddown = yearMeanFz-yearStdFz*stdTimes
-#             print(f'{amonth}/{aday}')
-#     print(f'finish YearMeanFz!')
-#     return yearMeanFz, stdup, stddown
 
 
-# def monthMean(ayear):
-#     # notUru = 2021
-#     dc = (date(notUru,12,31)-date(notUru,1,1)).days+1
-#     oneYearMeanFz = np.zeros((dc),dtype=np.float32)
-#     w_lat = cosphi
-#     for amonth in range(1,13):
-#         for aday in range(1,calendar.monthrange(notUru,amonth)[1]+1): #うるう年でなければ何でもよい
-#             dnum = (date(notUru,amonth,aday)-date(notUru,1,1)).days+1
-#             dates = f'{str(ayear).zfill(4)+str(amonth).zfill(2)+str(aday).zfill(2)}'
-#             loadfile = f'D:/data/MLS/e-p_flux/{ayear}/e-p_flux.{dates}.npz'
-#             dataz = np.load(loadfile)
-#             Fz = dataz["Fz"]
-#             fz_1d = np.zeros((latIndex[1]-latIndex[0]+1),np.float32)
-#             for ind in range(latIndex[0],latIndex[1]+1):
-#                 fz_1d[ind-latIndex[0]] = Fz[prsInd,ind]
 
-#                 # if ind == latIndex[0]:
-#                 #     fz_1d = Fz[prsInd,ind]
-#                 # else:
-#                 #     fz_1d = np.append(fz_1d, Fz[prsInd,ind])
-#             oneYearMeanFz[dnum-1] = np.nansum(fz_1d*w_lat)/np.sum(w_lat[~np.isnan(fz_1d)])
-#     print(f'finish Fz {ayear}!')
-#     return oneYearMeanFz
 
 # def checkDayIndex(datelist1,datelist2):
 #     fdate = date(notUru,1,1)
